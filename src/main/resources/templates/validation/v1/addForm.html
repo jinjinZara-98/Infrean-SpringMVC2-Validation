@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+<!--    .field-error는 글자색 테두리색 빨강으로-->
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.addItem}">상품 등록</h2>
+    </div>
+
+    <form action="item.html" th:action th:object="${item}" method="post">
+
+<!--        errorㄴ Map객체에 globalError 키가 존재하냐,
+            ?는 객체가 null이면 무시한다는 의미, Safe Navigation Operator
+            따라서 errors.containsKey() 를 호출하는 순간 NullPointerException 이 발생한다.
+            errors?.은 errors가 null 일때 NullPointerException이 발생하는 대신, null 을 반환하는 문법이다.
+            th:if에서 null은 실패로 처리되므로 오류 메시지가 출력되지 않는다. -->
+        <div th:if="${errors?.containsKey('globalError')}">
+<!--            그 키에 맞는 텍스트값 꺼내기, 미리 만들어둔 field-error클래스에서 빨간 글씨로 나오게 정의함-->
+            <p class="field-error" th:text="${errors['globalError']}">전체 오류 메시지</p>
+        </div>
+
+        <div>
+            <label for="itemName" th:text="#{label.item.itemName}">상품명</label>
+
+            <!-- errors Map객체에 itemName 키가 존재하면 form-control field-error 두가지 다-->
+            <input type="text" id="itemName" th:field="*{itemName}"
+                   th:class="${errors?.containsKey('itemName')} ? 'form-control field-error' : 'form-control'"
+                   class="form-control" placeholder="이름을 입력하세요">
+
+            <div class="field-error" th:if="${errors?.containsKey('itemName')}" th:text="${errors['itemName']}">
+                상품명 오류
+            </div>
+        </div>
+
+        <div>
+            <label for="price" th:text="#{label.item.price}">가격</label>
+
+            <input type="text" id="price" th:field="*{price}"
+                   th:class="${errors?.containsKey('price')} ? 'form-control field-error' : 'form-control'"
+                   class="form-control" placeholder="가격을 입력하세요">
+
+            <div class="field-error" th:if="${errors?.containsKey('price')}" th:text="${errors['price']}">
+                가격 오류
+            </div>
+        </div>
+
+        <div>
+            <label for="quantity" th:text="#{label.item.quantity}">수량</label>
+
+            <input type="text" id="quantity" th:field="*{quantity}"
+                   th:class="${errors?.containsKey('quantity')} ? 'form-control field-error' : 'form-control'"
+                   class="form-control" placeholder="수량을 입력하세요">
+
+            <div class="field-error" th:if="${errors?.containsKey('quantity')}" th:text="${errors['quantity']}">
+                수량 오류
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">상품 등록</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='items.html'"
+                        th:onclick="|location.href='@{/validation/v1/items}'|"
+                        type="button" th:text="#{button.cancel}">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+</body>
+</html>
+
+<!--필드오류처리를 더 깔끔하게 함, 기존 클래스에다가 fielderror를 추가, -->
+<!--그게 아니면 아무 일도 안함 th:classappend="${errors?.containsKey('itemName')} ? 'fielderror' : _" 없어짐-->
+
+<!--<input type="text" th:classappend="${errors?.containsKey('itemName')} ? 'fielderror' : _"-->
+<!--       class="form-control">-->
